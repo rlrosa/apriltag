@@ -71,6 +71,7 @@ int main(int argc, char *argv[])
     getopt_add_double(getopt, 'x', "decimate", "2.0", "Decimate input image by this factor");
     getopt_add_double(getopt, 'b', "blur", "0.0", "Apply low-pass blur to input; negative sharpens");
     getopt_add_bool(getopt, '0', "refine-edges", 1, "Spend more time trying to align edges of tags");
+    getopt_add_bool(getopt, 'z', "invert", 0, "Invert image");
 
     if (!getopt_parse(getopt, argc, argv, 1) || getopt_get_bool(getopt, "help")) {
         printf("Usage: %s [options] <input files>\n", argv[0]);
@@ -188,6 +189,13 @@ int main(int argc, char *argv[])
             if (im == NULL) {
                 printf("couldn't load %s\n", path);
                 continue;
+            }
+
+            if (getopt_get_bool(getopt, "invert")) {
+                printf("inverting tag\n");
+                for (int i = 0; i < im->height*im->stride; ++i) {
+                    im->buf[i] = 255 - im->buf[i];
+                }
             }
 
             zarray_t *detections = apriltag_detector_detect(td, im);
