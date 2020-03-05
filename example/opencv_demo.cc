@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
     getopt_add_double(getopt, 'x', "decimate", "2.0", "Decimate input image by this factor");
     getopt_add_double(getopt, 'b', "blur", "0.0", "Apply low-pass blur to input");
     getopt_add_bool(getopt, '0', "refine-edges", 1, "Spend more time trying to align edges of tags");
+    getopt_add_int(getopt, 'i', "input", "0", "Use /dev/video<this arg>");
+    getopt_add_bool(getopt, 'z', "invert", 0, "Invert image");
 
     if (!getopt_parse(getopt, argc, argv, 1) ||
             getopt_get_bool(getopt, "help")) {
@@ -67,9 +69,11 @@ int main(int argc, char *argv[])
     }
 
     // Initialize camera
-    VideoCapture cap(0);
+    VideoCapture cap(getopt_get_int(getopt, "input"));
     if (!cap.isOpened()) {
-        cerr << "Couldn't open video capture device" << endl;
+        cerr
+            << "Couldn't open video capture device, id:"
+            << getopt_get_int(getopt, "input") << endl;
         return -1;
     }
 
@@ -117,6 +121,13 @@ int main(int argc, char *argv[])
             .stride = gray.cols,
             .buf = gray.data
         };
+
+        if (getopt_get_bool(getopt, "invert")) {
+            std::cout << "inverting tag\n";
+            for (int i = 0; i < gray.rows*gray.cols; ++i) {
+                im.buf[i] = 255 - im.buf[i];
+            }
+        }
 
         zarray_t *detections = apriltag_detector_detect(td, &im);
         cout << zarray_size(detections) << " tags detected" << endl;
