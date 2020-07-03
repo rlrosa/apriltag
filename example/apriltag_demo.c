@@ -38,6 +38,7 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include <math.h>
 
 #include "apriltag.h"
+#include "apriltag_pose.h"
 #include "tag36h11.h"
 #include "tag25h9.h"
 #include "tag16h5.h"
@@ -210,6 +211,23 @@ int main(int argc, char *argv[])
 
                 hamm_hist[det->hamming]++;
                 total_hamm_hist[det->hamming]++;
+
+                // fill in with sane values
+                apriltag_detection_info_t di = {
+                    .det      = det,
+                    .tagsize  = 0.45,
+                    .fx       = im->width/2,
+                    .fy       = im->height/2,
+                    .cx       = im->width/2,
+                    .cy       = im->height/2,
+                };
+                apriltag_pose_t dp;
+                double pose_err = estimate_tag_pose(&di, &dp);
+                if (!(quiet)) {
+                    printf("pose err: %f\n", pose_err);
+                }
+                matd_destroy(dp.R);
+                matd_destroy(dp.t);
             }
 
             apriltag_detections_destroy(detections);
