@@ -118,6 +118,9 @@ struct apriltag_quad_thresh_params
     // should the thresholded image be deglitched? Only useful for
     // very noisy images
     int deglitch;
+
+    // default is 0.5. decide if a pixel should be black or white.
+    float thweight;
 };
 
 // Represents a detector object. Upon creating a detector, all fields

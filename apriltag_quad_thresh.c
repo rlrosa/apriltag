@@ -1191,6 +1191,8 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
         im_min = im_min_tmp;
     }
 
+    float th_w = td->qtp.thweight;
+
     for (int ty = 0; ty < th; ty++) {
         for (int tx = 0; tx < tw; tx++) {
 
@@ -1215,7 +1217,7 @@ image_u8_t *threshold(apriltag_detector_t *td, image_u8_t *im)
 
             // argument for biasing towards dark; specular highlights
             // can be substantially brighter than white tag parts
-            uint8_t thresh = min + (max - min) / 2;
+            uint8_t thresh = th_w * max + (1 - th_w) * min;
 
             for (int dy = 0; dy < tilesz; dy++) {
                 int y = ty*tilesz + dy;

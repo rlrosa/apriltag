@@ -363,6 +363,7 @@ apriltag_detector_t *apriltag_detector_create()
     td->qtp.cos_critical_rad = cos(10 * M_PI / 180);
     td->qtp.deglitch = 0;
     td->qtp.min_white_black_diff = 5;
+    td->qtp.thweight = 0.5;
 
     td->tag_families = zarray_create(sizeof(apriltag_family_t*));
 

@@ -86,6 +86,7 @@ apriltag_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
     int         maxhamming      = 1;
     float       decimate        = 1.0;
     float       blur            = 0.0;
+    float       thweight        = 0.5;
     bool        refine_edges    = true;
     bool        debug           = false;
     PyObject*   py_refine_edges = NULL;
@@ -96,17 +97,19 @@ apriltag_new(PyTypeObject *type, PyObject *args, PyObject *kwargs)
                         "maxhamming",
                         "decimate",
                         "blur",
+                        "thweight",
                         "refine-edges",
                         "debug",
                         NULL };
 
-    if(!PyArg_ParseTupleAndKeywords( args, kwargs, "s|iiffOO",
+    if(!PyArg_ParseTupleAndKeywords( args, kwargs, "s|iifffOO",
                                      keywords,
                                      &family,
                                      &Nthreads,
                                      &maxhamming,
                                      &decimate,
                                      &blur,
+                                     &thweight,
                                      &py_refine_edges,
                                      &py_debug ))
     {
